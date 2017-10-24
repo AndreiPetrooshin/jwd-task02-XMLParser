@@ -22,7 +22,7 @@ public class Node implements Element, Serializable {
 
     private String name;
     private String value;
-    private LinkedList<Element> childList = new LinkedList<>();
+    private LinkedList<Node> childList = new LinkedList<>();
     private List<Element> attrList = new ArrayList<>();
 
 
@@ -42,7 +42,7 @@ public class Node implements Element, Serializable {
         this.value = value;
     }
 
-    public List<? extends Element> getChildList() {
+    public List<Node> getChildList() {
         return childList;
     }
 
@@ -50,7 +50,7 @@ public class Node implements Element, Serializable {
         childList.add(node);
     }
 
-    public void setChildList(LinkedList<Element> childList) {
+    public void setChildList(LinkedList<Node> childList) {
         this.childList = childList;
     }
 

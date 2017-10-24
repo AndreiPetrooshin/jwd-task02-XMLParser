@@ -47,14 +47,14 @@ public class DocumentImpl implements Document {
      *
      * @param tagName  - the Name of the Tag
      * @param root     - the Root element of Document
-     * @param nodeList - the List to add the Nodes
-     * @return - Node can return null if tag don't exist
+     * @param nodeList - the List for adding the Nodes
+     * @return - Node can return null if tag doesn't exist
      */
     private Node searchInNodes(String tagName, Node root, List<Node> nodeList) {
         if (root.getName().equals(tagName)) {
             return root;
         }
-        List<Node> list = (List<Node>) root.getChildList();
+        List<Node> list = root.getChildList();
         for (Node node : list) {
             if (node.getName().equals(tagName)) {
                 nodeList.add(node);

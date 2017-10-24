@@ -18,39 +18,37 @@ import java.util.regex.Pattern;
 public final class ParseDAO {
 
     /**
-     * Constant {@link Pattern} to checks if there is
+     * This pattern {@link Pattern} checks if there is
      * such type construction <?xml version="1.0" encoding="UTF-8"?> like this
      */
     private final static Pattern XML_DECLARATION = Pattern.compile("(<\\?.*\\?>)");
 
 
     /**
-     * Constant {@link Pattern} to checks if there is
+     * This pattern {@link Pattern} checks if there is
      * such type construction <!-- Comments --> like this
      */
     private final static Pattern COMMENT_TAG = Pattern.compile("(<!--.*-->)");
 
 
     /**
-     * Constant {@link Pattern} to checks if there is
+     * This pattern {@link Pattern} checks if there is
      * such type construction </tagName> like this
      */
     private final static Pattern END_TAG = Pattern.compile("</.*>");
 
 
     /**
-     * Constant {@link Pattern} to checks if there is
+     * This pattern {@link Pattern} checks if there is
      * such type construction <tagName attribute="value"> like this
      */
     private final static Pattern SIMPLE_TAG = Pattern.compile("<[^/][\\s\\w\\-_=\"']+>");
 
     /**
-     * Constant {@link Pattern} to checks if there is
-     * such type construction <tagName attribute="value"> like this
+     * This pattern {@link Pattern} checks if there is
+     * such type construction <tagName attribute="value"/> like this
      */
-    private final static Pattern CLOSED_TAG= Pattern.compile("<[\\s\\w]+[ \\w\\S]+/[\\s]*>");
-
-
+    private final static Pattern CLOSED_TAG = Pattern.compile("<[\\s\\w]+[ \\w\\S]+/[\\s]*>");
 
 
     private static Document document;
@@ -64,66 +62,66 @@ public final class ParseDAO {
      * @throws DAOLayerException
      */
     public static Document parseXML(String path) throws DAOLayerException {
-        try (BufferedReader lineReader = new BufferedReader(getReaderByPath(path))) {
-            String xmlLine;
-            while (lineReader.ready()) {
-                xmlLine = lineReader.readLine();
-                parseLine(xmlLine);
+        try (BufferedReader reader = new BufferedReader(getReaderByPath(path))) {
+            String xmlStr = null;
+            while (reader.ready()) {
+                xmlStr += (char) reader.read();
             }
+            String tagLine = null;
+            while (!xmlStr.isEmpty()) {
+                int bracket = xmlStr.indexOf("<");
+                int nextBracket = xmlStr.indexOf("<", bracket + 1);
+                if (nextBracket == -1) {
+                    parseLine(tagLine);
+                    break;
+                }
+                tagLine = xmlStr.substring(bracket, nextBracket).trim();
+                xmlStr = xmlStr.substring(nextBracket).trim();
+                parseLine(tagLine);
+            }
+
         } catch (IOException e) {
             throw new DAOLayerException(e.fillInStackTrace());
         }
         return document;
     }
 
-    /**
-     * Creates and init Node object by the line in tag
-     * with end brackets </ >
-     *
-     * @param xmlLine String with xml data
-     * @return {@link Node} - returns the created Node object
-     */
-    private static Node createNodeForEndTag(String xmlLine) {
-        Node node = new Node();
-        String name = xmlLine.substring(xmlLine.indexOf('<') + 1, xmlLine.indexOf('>'));
-        String text = xmlLine.substring(xmlLine.indexOf('>') + 1, xmlLine.indexOf("</"));
-        node.setName(name);
-        node.setValue(text);
-        setAttrs(node);
-        StackDAO.addToChild(node);
-        return node;
-    }
+
+
 
     /**
-     * Creates and init Node object by the line in tag
-     * with simple brackets "<>"
+     * Parses xmlLine and creates the node Object
+     * and put them to {@link StackDAO} list
      *
-     * @param xmlLine String with xml data
-     * @return {@link Node} - returns the created Node object
+     * @param xmlLine - String line xml data
      */
-    private static Node createNodeForSimpleTag(String xmlLine) {
-        Node node = new Node();
-        String name = xmlLine.substring(xmlLine.indexOf('<') + 1, xmlLine.indexOf('>'));
-        node.setName(name);
-        setAttrs(node);
-        return node;
+    private static void parseLine(String xmlLine) {
+        if (patternMatch(XML_DECLARATION, xmlLine)) {
+            return;
+        }
+        if (patternMatch(COMMENT_TAG, xmlLine)) {
+            return;
+        }
+        if (patternMatch(END_TAG, xmlLine)) {
+            Node node = createNode(xmlLine);
+            node.addToChildNodeList(node);
+            node = StackDAO.popNode();
+            if (!StackDAO.isEmpty()) {
+                Node parent = StackDAO.peekNode();
+                parent.addToChildNodeList(node);
+            } else {
+                createDocument(node);
+            }
+        } else if (patternMatch(SIMPLE_TAG, xmlLine)) {
+            Node node = createNode(xmlLine);
+            StackDAO.addNode(node);
+        } else if (patternMatch(CLOSED_TAG, xmlLine)) {
+            Node node = createNode(xmlLine);
+            StackDAO.addToChild(node);
+        }
     }
 
-    /**
-     * Creates and init Node object by the line in tag
-     * with simple brackets "< />"
-     *
-     * @param xmlLine String with xml data
-     * @return {@link Node} - returns the created Node object
-     */
-    private static Node createNodeForClosedTag(String xmlLine) {
-        Node node = new Node();
-        String name = xmlLine.substring(xmlLine.indexOf('<') + 1, xmlLine.indexOf("/>"));
-        node.setName(name);
-        setAttrs(node);
-        StackDAO.addToChild(node);
-        return node;
-    }
+
 
 
     /**
@@ -137,39 +135,40 @@ public final class ParseDAO {
         return pattern.matcher(xmlLine).find();
     }
 
-    /**
-     * Parses xmlLine and creates the node Object
-     * and put them to {@link StackDAO}
-     *
-     * @param xmlLine - String line xml data
-     */
-    private static void parseLine(String xmlLine) {
-        if (patternMatch(XML_DECLARATION, xmlLine)) {
-            return;
-        }
-        if (patternMatch(COMMENT_TAG, xmlLine)) {
-            return;
-        }
-        if (patternMatch(END_TAG, xmlLine)) {
-            if (patternMatch(SIMPLE_TAG, xmlLine)) {
-                createNodeForEndTag(xmlLine);
-            } else {
-                Node node = StackDAO.popNode();
-                if (!StackDAO.isEmpty()) {
-                    Node parent = StackDAO.peekNode();
-                    parent.addToChildNodeList(node);
-                } else {
-                    createDocument(node);
-                }
-            }
 
-        } else if (patternMatch(SIMPLE_TAG, xmlLine)) {
-            Node node = createNodeForSimpleTag(xmlLine);
-            StackDAO.addNode(node);
-        } else if(patternMatch(CLOSED_TAG,xmlLine)){
-            createNodeForClosedTag(xmlLine);
+
+
+    /**
+     * Creates and init Node object by the line
+     *
+     * @param xmlLine String with xml data
+     * @return {@link Node} - returns the created Node object
+     */
+    private static Node createNode(String xmlLine) {
+        Node node = new Node();
+
+        int openBracket = xmlLine.indexOf('<');
+        int closeBracket = xmlLine.indexOf('>');
+        int slashBracket = xmlLine.indexOf("/>");
+        String tagName;
+
+        if (slashBracket != -1) {
+            tagName = xmlLine.substring(openBracket + 1, slashBracket);
+        } else {
+            tagName = xmlLine.substring(openBracket + 1, closeBracket);
         }
+
+        String value = xmlLine.substring(closeBracket + 1);
+        node.setValue(value);
+        node.setName(tagName);
+        setAttrs(node);
+
+        return node;
     }
+
+
+
+
 
     /**
      * Creates the document {@link Document} and sets the root node
@@ -183,23 +182,29 @@ public final class ParseDAO {
         return document;
     }
 
+
+
+
     /**
-     * This method takes and split
-     * in node object the name String and initializes the
-     * Attributes in this object
+     * This method takes the node object
+     * split his Name and initializes the
+     * Attributes at this object
      */
     private static void setAttrs(Node node) {
         String line = node.getName();
+
         if (line.contains(" ")) {
-            String attrs = line.substring(line.indexOf(" "));
+
+            String attrs = line.substring(line.indexOf(" ")).trim();
             String tagName = line.substring(0, line.indexOf(" "));
             node.setName(tagName);
             String[] attrArray = attrs.split("[\\s]+");
-            for (int i = 0; i < attrArray.length; i++) {
-                String[] splitValues = attrArray[i].split("=");
+
+            for (String attr : attrArray) {
+                String[] splitValues = attr.split("=");
                 if (splitValues.length >= 2) {
-                    String nameAttr = attrArray[i].split("=")[0];
-                    String valueAttr = attrArray[i].split("=")[1];
+                    String nameAttr = attr.split("=")[0];
+                    String valueAttr = attr.split("=")[1];
                     Attr attribute = new Attr(nameAttr, valueAttr);
                     node.addToAttrList(attribute);
                 }
@@ -207,12 +212,14 @@ public final class ParseDAO {
         }
     }
 
+
+
+
     /**
      * Creates and returns reader by Path
      *
      * @param path is relative Path to resource file;
      * @return {@link Reader}
-     *
      * @throws FileNotFoundException if file does not exist
      */
     private static Reader getReaderByPath(String path) throws FileNotFoundException {

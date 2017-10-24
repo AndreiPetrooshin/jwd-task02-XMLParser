@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<journal>
+<journal >
     <title>Very Useful Journal</title>
     <contacts>
         <address>sdsds</address>
@@ -8,43 +8,13 @@
         <email>j@j.ru</email>
         <url>www.j.ru</url>
     </contacts>
+    <andrei id="3" />
     <issues-list>
-
-        <issue index="2">
+        <issue index="22222222">
             <title>XML today</title>
             <date>12.09.98</date>
             <about>XML</about>
             <home-url>www.j.ru/issues/</home-url>
-            <articles>
-
-                <article ID="3">
-                    <title>Issue overview</title>
-                    <url>/article1</url>
-
-                    <hotkeys>
-                        <hotkey>language</hotkey>
-                        <hotkey>marckup</hotkey>
-                        <hotkey>hypertext</hotkey>
-                    </hotkeys>
-                    <article-finished/>
-                </article>
-
-                <article>
-                    <title>Latest reviews</title>
-                    <url>/article2</url>
-                    <author ID="3"/>
-                    <hotkeys>
-                        <hotkey/>
-                    </hotkeys>
-                </article>
-
-                <article ID="4">
-                    <title/>
-                    <url/>
-
-                    <hotkeys/>
-                </article>
-            </articles>
         </issue>
     </issues-list>
     <authors-list>

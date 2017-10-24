@@ -21,7 +21,7 @@ public class PrintNodeInfo {
             printNodeChilds(node);
             printCloseTag(node);
         } else {
-            String attrLine = getAttributesInLine(node.getAttrList());
+            String attrLine = createAttrLine(node.getAttrList());
             System.out.print(String.format("<%s %s>",
                     node.getName(), attrLine));
             printNodeChilds(node);
@@ -30,8 +30,8 @@ public class PrintNodeInfo {
 
     }
 
-    private static String getAttributesInLine(List<? extends Element> list) {
-        String line = null;
+    private static String createAttrLine(List<? extends Element> list) {
+        String line = "";
         for (Element attr : list) {
             Attr a1 = (Attr) attr;
             line += a1.toString();
