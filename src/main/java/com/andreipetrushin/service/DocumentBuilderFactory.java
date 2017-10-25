@@ -4,7 +4,7 @@ import com.andreipetrushin.service.impl.DocumentBuilderImpl;
 
 /**
  * The singleton class which
- * returns the DocumendBuilder instance
+ * returns the DocumentBuilder instance
  *
  * @author Andrei Petrushin
  * @version 1.0.0

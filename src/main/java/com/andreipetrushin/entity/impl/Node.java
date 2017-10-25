@@ -20,6 +20,9 @@ import com.andreipetrushin.entity.Element;
 public class Node implements Element, Serializable {
 
 
+    private static final long serialVersionUID = 2L;
+
+
     private String name;
     private String value;
     private LinkedList<Node> childList = new LinkedList<>();

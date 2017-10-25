@@ -20,14 +20,16 @@ public class Main  {
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
             Document document = documentBuilder.parse("./src/main/resources/task02.xml");
-            Node node = document.getRootNode();
+
+
+            System.out.println(document.getNodeByTagName("price").get(1).getValue());
+
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             System.out.print("Print tag product:");
             List<Node> nodes = document.getNodeByTagName(reader.readLine());
             for(Node n: nodes){
                 PrintNodeInfo.print(n);
             }
-
         }catch (ServiceLayerException | IOException e) {
             e.printStackTrace();
         }

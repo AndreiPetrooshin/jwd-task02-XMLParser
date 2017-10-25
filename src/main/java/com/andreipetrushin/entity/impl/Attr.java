@@ -14,6 +14,8 @@ import java.io.Serializable;
  * */
 public class Attr implements Element, Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private String name;
     private String value;
 

@@ -9,13 +9,13 @@ import java.io.*;
 import java.util.regex.Pattern;
 
 /**
- * This class consist exclusively of static methods that operate on or return
- * Document.
+ * This class consist exclusively of static methods
+ * that operate on or return Document.
  *
  * @author Andrei Petrushin
  * @version 1.0.0
  */
-public final class ParseDAO {
+public final class XMLParserDAO {
 
     /**
      * This pattern {@link Pattern} checks if there is
@@ -59,7 +59,7 @@ public final class ParseDAO {
      *
      * @param path - Path to file
      * @return Document
-     * @throws DAOLayerException
+     * @throws DAOLayerException - if the something go wrong
      */
     public static Document parseXML(String path) throws DAOLayerException {
         try (BufferedReader reader = new BufferedReader(getReaderByPath(path))) {

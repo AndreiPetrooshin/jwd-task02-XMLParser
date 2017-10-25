@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The DocumentImpl class wich implements {@link Document}
+ * The DocumentImpl class which implements {@link Document}
  * interface and contains the rootNode object
  *
  * @author Andrei Petrushin

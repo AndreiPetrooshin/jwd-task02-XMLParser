@@ -6,6 +6,7 @@ import com.andreipetrushin.entity.impl.Node;
 
 import java.util.List;
 
+
 /**
  * This class prints to console
  * the DOM of Node element
@@ -15,46 +16,50 @@ import java.util.List;
  */
 public class PrintNodeInfo {
 
+    private static StringBuilder indent = new StringBuilder();
+
     public static void print(Node node) {
         if (node.getAttrList().isEmpty()) {
-            System.out.print(String.format("<%s>", node.getName()));
+            System.out.print(String.format("%n%s%s ",indent, node.getName()));
             printNodeChilds(node);
-            printCloseTag(node);
+            printNodeValue(node);
         } else {
             String attrLine = createAttrLine(node.getAttrList());
-            System.out.print(String.format("<%s %s>",
-                    node.getName(), attrLine));
+            System.out.print(String.format("%n%s%s (%s): ",
+                    indent,node.getName(), attrLine));
             printNodeChilds(node);
-            printCloseTag(node);
+            printNodeValue(node);
         }
 
     }
 
     private static String createAttrLine(List<? extends Element> list) {
-        String line = "";
+        StringBuilder stringBuilder = new StringBuilder();
         for (Element attr : list) {
+            stringBuilder.append(" ");
             Attr a1 = (Attr) attr;
-            line += a1.toString();
+            stringBuilder.append(a1.toString()).append(" ");
         }
-        return line;
+        return String.valueOf(stringBuilder);
     }
 
-    private static void printCloseTag(Node node) {
-        if (node.getValue() == null) {
-            System.out.print(String.format("</%s>%n", node.getName()));
+    private static void printNodeValue(Node node) {
+        if (node.getValue().isEmpty()) {
+            System.out.println();
         } else {
-            System.out.print(String.format("%s</%s>%n", node.getValue(), node.getName()));
+            System.out.print(String.format("- %s", node.getValue()));
         }
     }
 
     private static void printNodeChilds(Node node) {
         if (!node.getChildList().isEmpty()) {
-            System.out.println();
-            for (Element element : node.getChildList()) {
-                Node n = (Node) element;
-                print(n);
+            for (Node element : node.getChildList()) {
+                indent.append("-");
+                print(element);
+                indent.delete(indent.length() - 1, indent.length());
             }
         }
     }
 
 }
+

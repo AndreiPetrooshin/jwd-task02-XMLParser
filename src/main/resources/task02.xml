@@ -1,40 +1,10 @@
-<?xml version="1.0"?>
-<journal >
-    <title>Very Useful Journal</title>
-    <contacts>
-        <address>sdsds</address>
-        <tel>8-3232-121212</tel>
-        <tel>8-3232-121212</tel>
-        <email>j@j.ru</email>
-        <url>www.j.ru</url>
-    </contacts>
-    <andrei id="3" />
-    <issues-list>
-        <issue index="22222222">
-            <title>XML today</title>
-            <date>12.09.98</date>
-            <about>XML</about>
-            <home-url>www.j.ru/issues/</home-url>
-        </issue>
-    </issues-list>
-    <authors-list>
-
-        <author ID="1">
-            <firstname>Ivan</firstname>
-            <lastname>Petrov</lastname>
-            <email>vanya@r.ru</email>
-        </author>
-
-        <author ID="3">
-            <firstname>Petr</firstname>
-            <lastname>Ivanov</lastname>
-            <email>petr@r.ru</email>
-        </author>
-
-        <author ID="4">
-            <firstname>Sidor</firstname>
-            <lastname>Sidorov</lastname>
-            <email>sidor@r.ru</email>
-        </author>
-    </authors-list>
-</journal>
+<breakfast-menu>
+    <food id="1">
+        <name>Belgian Waffles</name>
+        <price>$5.95</price>
+    </food>
+    <food id="2">
+        <name>Strawberry Belgian Waffles</name>
+        <price>$7.95</price>
+    </food>
+</breakfast-menu>
